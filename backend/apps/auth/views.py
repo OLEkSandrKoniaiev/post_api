@@ -1,14 +1,21 @@
+from configs.extra_conf import SIMPLE_JWT
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from rest_framework import status
-from rest_framework.generics import GenericAPIView, get_object_or_404
+from rest_framework.generics import GenericAPIView, UpdateAPIView, get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.services.email_service import EmailService
 from core.services.jwt_service import ActivateToken, JWTService, RecoveryToken, SocketToken
 
-from apps.auth.serializers import EmailSerializer, PasswordSerializer
+from apps.auth.serializers import EmailSerializer, LogoutSerializer, PasswordSerializer
 from apps.user.serializers import UserSerializer
 
 UserModel = get_user_model()
@@ -72,3 +79,61 @@ class SocketTokenView(GenericAPIView):
     def get(self, *args, **kwargs):
         token = JWTService.create_token(user=self.request.user, token_class=SocketToken)
         return Response({'token': str(token)}, status.HTTP_200_OK)
+
+
+class ModifiedTokenObtainPairView(TokenObtainPairView):
+
+    def post(self, request: Request, *args, **kwargs) -> Response:
+        response = super().post(request, *args, **kwargs)
+        email = request.data['email']
+
+        if email:
+            try:
+                user = UserModel.objects.get(email=email)
+                user.last_logout = timezone.now() + SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
+                user.save()
+            except UserModel.DoesNotExist:
+                return Response({"detail": "User with this email does not exist."}, status=status.HTTP_404_NOT_FOUND)
+            except Exception as e:
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        return response
+
+
+class ModifiedTokenRefreshView(TokenRefreshView):
+
+    def post(self, request: Request, *args, **kwargs) -> Response:
+        response = super().post(request, *args, **kwargs)
+        refresh_token = request.data['refresh']
+
+        if refresh_token:
+            try:
+                token = RefreshToken(refresh_token)
+                user = UserModel.objects.get(id=token['user_id'])
+                user.last_login = timezone.now()
+                user.last_logout = timezone.now() + SIMPLE_JWT['REFRESH_TOKEN_LIFETIME']
+                user.save()
+            except Exception as e:
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        return response
+
+
+class UserLogoutView(UpdateAPIView):
+    serializer_class = LogoutSerializer
+    permission_classes = [IsAuthenticated]
+    http_method_names = ['patch']
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        refresh_token = serializer.validated_data["refresh"]
+        token = RefreshToken(refresh_token)
+
+        user = get_object_or_404(UserModel, id=token['user_id'])
+        user.last_logout = timezone.now()
+        user.save()
+
+        token.blacklist()
+        return Response({"detail": "Successfully logged out."}, status=status.HTTP_205_RESET_CONTENT)

@@ -38,6 +38,7 @@ class UserSerializer(serializers.ModelSerializer):
             'is_staff',
             'is_superuser',
             'last_login',
+            'last_logout',
             'created_at',
             'updated_at',
             'profile'

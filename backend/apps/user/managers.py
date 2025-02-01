@@ -28,3 +28,6 @@ class UserManager(Manager):
 
         user = self.create_user(email=email, password=password, **extra_fields)
         return user
+
+    def registered(self):
+        return self.filter(is_active=True)

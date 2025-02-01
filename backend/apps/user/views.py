@@ -29,6 +29,16 @@ class UserListCreateView(ListCreateAPIView):
         return [IsAuthenticated()]
 
 
+class AuthorizedUserListView(ListAPIView):
+    """
+    get:
+        Get a list of authorized users
+    """
+    queryset = UserModel.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+
 class BlockUserView(GenericAPIView):
     """
     patch:
