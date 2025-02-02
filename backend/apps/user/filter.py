@@ -2,13 +2,21 @@ from django_filters import rest_framework as filters
 
 from django.contrib.auth import get_user_model
 
-from apps.user.serializers import ProfileSerializer
+from apps.user.serializers import ProfileSerializer, UserSerializer
 
 UserModel = get_user_model()
 
 
 class UserFilter(filters.FilterSet):
-    pass
+    id = filters.NumberFilter()
+
+    email_starts_with = filters.CharFilter(field_name='email', lookup_expr='startswith')
+    email_ends_with = filters.CharFilter(field_name='email', lookup_expr='endswith')
+    email_contains = filters.CharFilter(field_name='email', lookup_expr='contains')
+
+    order = filters.OrderingFilter(
+        fields=UserSerializer.Meta.fields,
+    )
 
 
 class ProfileFilter(filters.FilterSet):

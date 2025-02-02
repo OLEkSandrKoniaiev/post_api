@@ -1,11 +1,12 @@
 from django.contrib.auth import get_user_model
 
 from rest_framework import status
-from rest_framework.generics import GenericAPIView, ListAPIView, ListCreateAPIView, UpdateAPIView
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.generics import DestroyAPIView, GenericAPIView, ListAPIView, ListCreateAPIView, UpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from apps.user.filter import ProfileFilter
+from apps.user.filter import ProfileFilter, UserFilter
 from apps.user.models import ProfileModel
 from apps.user.permissions import IsSuperUser
 from apps.user.serializers import ProfilePhotoSerializer, ProfileSerializer, UserSerializer
@@ -22,6 +23,7 @@ class UserListCreateView(ListCreateAPIView):
     """
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
+    filterset_class = UserFilter
 
     def get_permissions(self):
         if self.request.method == 'POST':
@@ -29,14 +31,27 @@ class UserListCreateView(ListCreateAPIView):
         return [IsAuthenticated()]
 
 
-class AuthorizedUserListView(ListAPIView):
+# class AuthorizedUserListView(ListAPIView):
+#     """
+#     get:
+#         Get a list of authorized users
+#     """
+#     queryset = UserModel.objects.all()
+#     serializer_class = UserSerializer
+#     permission_classes = [AllowAny]
+
+
+class UserDestroyView(DestroyAPIView):
     """
-    get:
-        Get a list of authorized users
+    delete:
+        Delete a user
     """
-    queryset = UserModel.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        obj = UserModel.objects.get(id=self.request.user.id)
+        return obj
 
 
 class BlockUserView(GenericAPIView):
@@ -133,6 +148,20 @@ class ProfileListView(ListAPIView):
     queryset = ProfileModel.objects.all()
     serializer_class = ProfileSerializer
     filterset_class = ProfileFilter
+
+
+class ProfileUpdateView(UpdateAPIView):
+    """
+    patch:
+        Update a profile
+    """
+    serializer_class = ProfileSerializer
+    http_method_names = ['patch']
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        obj = ProfileModel.objects.get(user=self.request.user)
+        return obj
 
 
 class ProfileAddPhotoView(UpdateAPIView):

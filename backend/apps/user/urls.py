@@ -4,16 +4,20 @@ from .views import (
     BlockUserView,
     ProfileAddPhotoView,
     ProfileListView,
+    ProfileUpdateView,
     UnBlockUserView,
+    UserDestroyView,
     UserListCreateView,
     UserToAdminView
 )
 
 urlpatterns = [
     path('', UserListCreateView.as_view(), name='user_list_create'),
-    path('/profiles', ProfileListView.as_view(), name='profile_list'),
+    path("/delete", UserDestroyView.as_view(), name='user_destroy'),
     path('/<int:pk>/block', BlockUserView.as_view(), name='user_block'),
     path('/<int:pk>/unblock', UnBlockUserView.as_view(), name='user_unblock'),
     path('/<int:pk>/to_admin', UserToAdminView.as_view(), name='user_to_admin'),
+    path('/profiles', ProfileListView.as_view(), name='profile_list'),
+    path("/profiles/patch", ProfileUpdateView.as_view(), name='profile_update'),
     path("/profiles/<int:pk>/photos", ProfileAddPhotoView.as_view(), name='profile_photos'),
 ]
