@@ -103,7 +103,6 @@ class ModifiedTokenObtainPairView(TokenObtainPairView):
 class ModifiedTokenRefreshView(TokenRefreshView):
 
     def post(self, request: Request, *args, **kwargs) -> Response:
-        response = super().post(request, *args, **kwargs)
         refresh_token = request.data['refresh']
 
         if refresh_token:
@@ -116,6 +115,7 @@ class ModifiedTokenRefreshView(TokenRefreshView):
             except Exception as e:
                 return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+        response = super().post(request, *args, **kwargs)
         return response
 
 
