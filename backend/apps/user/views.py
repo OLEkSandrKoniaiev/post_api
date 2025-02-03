@@ -1,10 +1,13 @@
 from django.contrib.auth import get_user_model
+from django.db import models
+from django.db.models import Q
+from django.utils import timezone
 
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import DestroyAPIView, GenericAPIView, ListAPIView, ListCreateAPIView, UpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.user.filter import ProfileFilter, UserFilter
 from apps.user.models import ProfileModel
@@ -31,14 +34,24 @@ class UserListCreateView(ListCreateAPIView):
         return [IsAuthenticated()]
 
 
-# class AuthorizedUserListView(ListAPIView):
-#     """
-#     get:
-#         Get a list of authorized users
-#     """
-#     queryset = UserModel.objects.all()
-#     serializer_class = UserSerializer
-#     permission_classes = [AllowAny]
+# TODO: переробити в'юшку
+class AuthorizedUserListView(APIView):
+    """
+    get:
+        Get a list of authorized users
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        now = timezone.now()
+
+        users = UserModel.objects.filter(
+            Q(last_logout__gt=models.F('last_login')) &
+            Q(last_logout__gt=now)
+        )
+
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
 
 
 class UserDestroyView(DestroyAPIView):

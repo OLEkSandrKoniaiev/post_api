@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    AuthorizedUserListView,
     BlockUserView,
     ProfileAddPhotoView,
     ProfileListView,
@@ -13,11 +14,12 @@ from .views import (
 
 urlpatterns = [
     path('', UserListCreateView.as_view(), name='user_list_create'),
-    path("/delete", UserDestroyView.as_view(), name='user_destroy'),
+    path('/delete', UserDestroyView.as_view(), name='user_destroy'),
+    path('/online', AuthorizedUserListView.as_view(), name='user_online'),
     path('/<int:pk>/block', BlockUserView.as_view(), name='user_block'),
     path('/<int:pk>/unblock', UnBlockUserView.as_view(), name='user_unblock'),
     path('/<int:pk>/to_admin', UserToAdminView.as_view(), name='user_to_admin'),
     path('/profiles', ProfileListView.as_view(), name='profile_list'),
-    path("/profiles/patch", ProfileUpdateView.as_view(), name='profile_update'),
-    path("/profiles/<int:pk>/photos", ProfileAddPhotoView.as_view(), name='profile_photos'),
+    path('/profiles/patch', ProfileUpdateView.as_view(), name='profile_update'),
+    path('/profiles/<int:pk>/photos', ProfileAddPhotoView.as_view(), name='profile_photos'),
 ]

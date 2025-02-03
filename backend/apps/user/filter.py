@@ -1,18 +1,14 @@
 from django_filters import rest_framework as filters
 
-from django.contrib.auth import get_user_model
-
 from apps.user.serializers import ProfileSerializer, UserSerializer
-
-UserModel = get_user_model()
 
 
 class UserFilter(filters.FilterSet):
-    id = filters.NumberFilter()
+    id = filters.NumberFilter(field_name='id')
 
     email_starts_with = filters.CharFilter(field_name='email', lookup_expr='startswith')
     email_ends_with = filters.CharFilter(field_name='email', lookup_expr='endswith')
-    email_contains = filters.CharFilter(field_name='email', lookup_expr='contains')
+    email_contains = filters.CharFilter(field_name='email', lookup_expr='icontains')
 
     order = filters.OrderingFilter(
         fields=UserSerializer.Meta.fields,
@@ -22,13 +18,13 @@ class UserFilter(filters.FilterSet):
 class ProfileFilter(filters.FilterSet):
     name_starts_with = filters.CharFilter(field_name='name', lookup_expr='startswith')
     name_ends_with = filters.CharFilter(field_name='name', lookup_expr='endswith')
-    name_contains = filters.CharFilter(field_name='name', lookup_expr='contains')
+    name_contains = filters.CharFilter(field_name='name', lookup_expr='icontains')
 
     surname_starts_with = filters.CharFilter(field_name='name', lookup_expr='startswith')
     surname_ends_with = filters.CharFilter(field_name='name', lookup_expr='endswith')
-    surname_contains = filters.CharFilter(field_name='name', lookup_expr='contains')
+    surname_contains = filters.CharFilter(field_name='name', lookup_expr='icontains')
 
-    age = filters.NumberFilter()
+    age = filters.NumberFilter(field_name='age')
     age_gt = filters.NumberFilter(field_name='age', lookup_expr='gt')
     age_gte = filters.NumberFilter(field_name='age', lookup_expr='gte')
     age_lt = filters.NumberFilter(field_name='age', lookup_expr='lt')
