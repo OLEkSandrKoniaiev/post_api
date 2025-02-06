@@ -1,3 +1,7 @@
+from drf_yasg.utils import swagger_auto_schema
+
+from django.utils.decorators import method_decorator
+
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -7,6 +11,12 @@ from apps.posts.models import PostModel
 from apps.posts.serializers import PostSerializer
 
 
+@method_decorator(
+    name='get',
+    decorator=swagger_auto_schema(
+        security=[],
+    ),
+)
 class PostListCreateView(ListCreateAPIView):
     """
     get:
@@ -24,6 +34,12 @@ class PostListCreateView(ListCreateAPIView):
         return [IsAuthenticated()]
 
 
+@method_decorator(
+    name='get',
+    decorator=swagger_auto_schema(
+        security=[],
+    ),
+)
 class PostRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     """
     get:

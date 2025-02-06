@@ -1,10 +1,12 @@
 from configs.extra_conf import SIMPLE_JWT
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 
 from rest_framework import status
 from rest_framework.generics import GenericAPIView, UpdateAPIView, get_object_or_404
@@ -21,7 +23,12 @@ from apps.user.serializers import UserSerializer
 UserModel = get_user_model()
 
 
-# TODO: реалізувати адекватну активацію для користувача
+@method_decorator(
+    name='patch',
+    decorator=swagger_auto_schema(
+        security=[],
+    ),
+)
 class ActivateUserView(GenericAPIView):
     """
     patch:
@@ -43,10 +50,22 @@ class ActivateUserView(GenericAPIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
 
-# TODO: так само реалізувати адекватно відновлення паролю, доробити представленя
+@method_decorator(
+    name='post',
+    decorator=swagger_auto_schema(
+        security=[],
+    ),
+)
 class RecoveryRequestView(GenericAPIView):
-    permission_classes = (AllowAny,)
+    """
+    post:
+        Sending a request to get the token
+    """
+    permission_classes = [AllowAny]
     http_method_names = ['post']
+
+    def get_serializer(self):
+        return None
 
     def post(self, *args, **kwargs):
         data = self.request.data
@@ -57,9 +76,22 @@ class RecoveryRequestView(GenericAPIView):
         return Response({'details': 'link send to email'}, status.HTTP_200_OK)
 
 
+@method_decorator(
+    name='post',
+    decorator=swagger_auto_schema(
+        security=[],
+    ),
+)
 class RecoveryPasswordView(GenericAPIView):
-    permission_classes = (AllowAny,)
+    """
+    post:
+        Sending a token to change the password
+    """
+    permission_classes = [AllowAny]
     http_method_names = ['post']
+
+    def get_serializer(self):
+        return None
 
     def post(self, *args, **kwargs):
         data = self.request.data
@@ -74,14 +106,31 @@ class RecoveryPasswordView(GenericAPIView):
 
 
 class SocketTokenView(GenericAPIView):
-    permission_classes = (IsAuthenticated,)
+    """
+    get:
+        Get token for socket connection
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer(self):
+        return None
 
     def get(self, *args, **kwargs):
         token = JWTService.create_token(user=self.request.user, token_class=SocketToken)
         return Response({'token': str(token)}, status.HTTP_200_OK)
 
 
+@method_decorator(
+    name='post',
+    decorator=swagger_auto_schema(
+        security=[],
+    ),
+)
 class ModifiedTokenObtainPairView(TokenObtainPairView):
+    """
+    post:
+        Sending credentials for login
+    """
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         response = super().post(request, *args, **kwargs)
@@ -100,7 +149,17 @@ class ModifiedTokenObtainPairView(TokenObtainPairView):
         return response
 
 
+@method_decorator(
+    name='post',
+    decorator=swagger_auto_schema(
+        security=[],
+    ),
+)
 class ModifiedTokenRefreshView(TokenRefreshView):
+    """
+    post:
+        Sending refresh token to get new token pair
+    """
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         refresh_token = request.data['refresh']
@@ -120,6 +179,10 @@ class ModifiedTokenRefreshView(TokenRefreshView):
 
 
 class UserLogoutView(UpdateAPIView):
+    """
+    patch:
+        Logout the user
+    """
     serializer_class = LogoutSerializer
     permission_classes = [IsAuthenticated]
     http_method_names = ['patch']

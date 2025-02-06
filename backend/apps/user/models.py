@@ -30,8 +30,10 @@ class ProfileModel(BaseModel):
         db_table = 'profile'
         ordering = ['-id']
 
-    name = models.CharField(max_length=20)
-    surname = models.CharField(max_length=20)
-    age = models.IntegerField(validators=(V.MinValueValidator(6), V.MaxValueValidator(150),))
+    name = models.CharField(max_length=20,
+                            validators=(V.RegexValidator(*RegexEnum.NAME_SURNAME.value),))
+    surname = models.CharField(max_length=20,
+                               validators=(V.RegexValidator(*RegexEnum.NAME_SURNAME.value),))
+    age = models.IntegerField(validators=(V.MinValueValidator(6), V.MaxValueValidator(122),))
     photo = models.ImageField(upload_to=upload_profile_photo, blank=True)
     user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name='profile')

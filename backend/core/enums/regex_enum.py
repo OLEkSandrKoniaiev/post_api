@@ -2,10 +2,10 @@ from enum import Enum
 
 
 class RegexEnum(Enum):
-    # PIZZA_NAME = (
-    #     r'^[A-Z][a-z]{,19}$',
-    #     'Only alphabetic letters allowed.'
-    # )
+    NAME_SURNAME = (
+        r'^[A-Za-z]{1,19}$',
+        'Only alphabetic letters allowed (1 to 19 characters).',
+    )
 
     PASSWORD = (
         r'^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])(\S){8,16}$',

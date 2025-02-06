@@ -1,13 +1,14 @@
+from drf_yasg.utils import swagger_auto_schema
+
 from django.contrib.auth import get_user_model
-from django.db import models
-from django.db.models import Q
+from django.db.models import F, Q
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 
 from rest_framework import status
 from rest_framework.generics import DestroyAPIView, GenericAPIView, ListAPIView, ListCreateAPIView, UpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from apps.user.filter import ProfileFilter, UserFilter
 from apps.user.models import ProfileModel
@@ -17,6 +18,12 @@ from apps.user.serializers import ProfilePhotoSerializer, ProfileSerializer, Use
 UserModel = get_user_model()
 
 
+@method_decorator(
+    name='post',
+    decorator=swagger_auto_schema(
+        security=[],
+    ),
+)
 class UserListCreateView(ListCreateAPIView):
     """
     get:
@@ -34,24 +41,17 @@ class UserListCreateView(ListCreateAPIView):
         return [IsAuthenticated()]
 
 
-# TODO: переробити в'юшку
-class AuthorizedUserListView(APIView):
+class AuthorizedUserListView(ListAPIView):
     """
     get:
         Get a list of authorized users
     """
     permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
 
-    def get(self, request, *args, **kwargs):
+    def get_queryset(self):
         now = timezone.now()
-
-        users = UserModel.objects.filter(
-            Q(last_logout__gt=models.F('last_login')) &
-            Q(last_logout__gt=now)
-        )
-
-        serializer = UserSerializer(users, many=True)
-        return Response(serializer.data)
+        return UserModel.objects.filter(Q(last_logout__gt=F('last_login')) & Q(last_logout__gt=now))
 
 
 class UserDestroyView(DestroyAPIView):
@@ -153,6 +153,12 @@ class AdminToUserView(GenericAPIView):
         return Response(serializer.data, status.HTTP_200_OK)
 
 
+@method_decorator(
+    name='get',
+    decorator=swagger_auto_schema(
+        security=[],
+    ),
+)
 class ProfileListView(ListAPIView):
     """
     get:
@@ -161,6 +167,7 @@ class ProfileListView(ListAPIView):
     queryset = ProfileModel.objects.all()
     serializer_class = ProfileSerializer
     filterset_class = ProfileFilter
+    permission_classes = [AllowAny]
 
 
 class ProfileUpdateView(UpdateAPIView):
@@ -179,15 +186,16 @@ class ProfileUpdateView(UpdateAPIView):
 
 class ProfileAddPhotoView(UpdateAPIView):
     """
-    patch:
+    put:
         Update a profile photo
     """
-    queryset = ProfileModel.objects.all()
     serializer_class = ProfilePhotoSerializer
     http_method_names = ['put']
     permission_classes = [IsAuthenticated]
 
-    # TODO: реалізувати клас дозволу з перевіркою чи доступається до даних саме цей користувач
+    def get_object(self):
+        obj = ProfileModel.objects.get(user=self.request.user)
+        return obj
 
     def perform_update(self, serializer):
         profile = self.get_object()

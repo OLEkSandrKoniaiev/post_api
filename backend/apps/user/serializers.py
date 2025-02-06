@@ -21,8 +21,9 @@ class ProfileSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
             'user',
+            'photo',
         )
-        read_only_fields = ('user',)
+        read_only_fields = ('user', 'photo')
 
 
 class UserSerializer(serializers.ModelSerializer):
