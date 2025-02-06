@@ -1,68 +1,55 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+@layer components {
+    .form-container {
+        @apply bg-white p-6 rounded-2xl shadow-md w-80 space-y-4;
+    }
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+    .input-field {
+        @apply w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400;
+    }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
+    .btn-primary {
+        @apply w-full bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600 transition;
+    }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
+    .btn-secondary {
+        @apply w-full bg-green-500 text-white py-2 rounded-xl hover:bg-green-600 transition;
+    }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
+    .error-message {
+        @apply text-red-500 text-center;
+    }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
+    .container {
+        @apply p-5 bg-gray-100;
+    }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+    .grid-container {
+        @apply grid gap-5 grid-rows-1 sm:grid-rows-2 md:grid-rows-3 lg:grid-rows-4 xl:grid-rows-5;
+    }
+
+    .card {
+        @apply bg-white rounded-lg p-4 m-4 shadow-md transition-transform duration-300 hover:-translate-y-1;
+    }
+
+    .error-message {
+        @apply text-center p-6;
+    }
+
+    .error-text {
+        @apply text-red-500 mb-4;
+    }
+
+    .error-links {
+        @apply flex justify-center gap-4;
+    }
+
+    .link {
+        @apply font-bold text-blue-300 hover:underline;
+    }
+
+    .profile-photo {
+        @apply w-20 h-20 rounded-full mt-2 object-cover;
+    }
 }
