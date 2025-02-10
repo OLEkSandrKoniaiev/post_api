@@ -1,0 +1,865 @@
+{
+	"info": {
+		"_postman_id": "a8a51615-877d-402d-95a3-574c2cb8c2eb",
+		"name": "post API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32616252"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"res = pm.response.json();\r",
+									"pm.environment.set(\"access\", res.access);\r",
+									"pm.environment.set(\"refresh\", res.refresh);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "oleksandrkoniaiev.r@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "P@ssword1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/auth",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "refresh",
+									"value": "{{refresh}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/auth/logout",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "refresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"res = pm.response.json();\r",
+									"pm.environment.set(\"access\", res.access);\r",
+									"pm.environment.set(\"refresh\", res.refresh);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "refresh",
+									"value": "{{refresh}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/auth/refresh",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "activate user",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/auth/activate/:token",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"activate",
+								":token"
+							],
+							"variable": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWN0aXZhdGUiLCJleHAiOjE3Mzg0MTMxNTIsImlhdCI6MTczODQxMTM1MiwianRpIjoiYjIyOTM3OGY2ODVkNDgxYzg2YzFkOTdjNDVjOTI1MjYiLCJ1c2VyX2lkIjoyfQ.ffCSbAmj2-DxqXbzsCo_mcndbLzrfVgVmq_G-K64Xb8"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "recovery request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "oleksandrkoniaiev.d@gmail.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/auth/recovery",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"recovery"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "recovery password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "password",
+									"value": "P@ssword11",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/auth/recovery/:token",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"recovery",
+								":token"
+							],
+							"variable": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVjb3ZlcnkiLCJleHAiOjE3MzgzMjMwMzUsImlhdCI6MTczODMyMjQzNSwianRpIjoiMjM4NjhiZmMzYWQ5NDVlODk3NGIxOGJjODk1NjI2YWMiLCJ1c2VyX2lkIjo0fQ.XWEWgPHJT5T7haAuMrXll9YNqkTrEoRuQlesSl9hLMA"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "socket",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"res = pm.response.json();\r",
+									"pm.environment.set(\"websocket_token\", res.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/auth/socket",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth",
+								"socket"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "profile",
+					"item": [
+						{
+							"name": "list",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}/users/profiles",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"profiles"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "size",
+											"value": "20",
+											"disabled": true
+										},
+										{
+											"key": "name_starts_with",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "name_ends_with",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "name_contains",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "surname_starts_with",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "surname_ends_with",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "surname_contains",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "age",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "age_gt",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "age_gte",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "age_lt",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "age_lte",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "order",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "update",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "surname",
+											"value": "Kotenko",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}/users/profiles/patch",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"profiles",
+										"patch"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "add photo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{access}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "photo",
+											"type": "file",
+											"src": "/C:/Users/oleks/Downloads/Young_german_man.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}/users/profiles/add_photo",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"users",
+										"profiles",
+										"add_photo"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "email_starts_with",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "email_ends_with",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "email_contains",
+									"value": "pp",
+									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "-updated_at",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "list online",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/online",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"online"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"oleksandrkoniaiev.r@gmail.com\",\r\n    \"password\": \"P@ssword1\",\r\n    \"profile\": {\r\n        \"name\": \"Oleksandr\",\r\n        \"surname\": \"Koniaiev\",\r\n        \"age\": 20\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{host}}/users",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "destroy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/delete",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "block",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/2/block",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"2",
+								"block"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unblock",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/2/unblock",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"2",
+								"unblock"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "user to admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/2/to_admin",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"2",
+								"to_admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "admin to user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/users/2/to_user",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"users",
+								"2",
+								"to_user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "posts",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts?user=1",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							],
+							"query": [
+								{
+									"key": "user",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "text",
+									"value": "Це пост користувача 2 під номером 5!",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "text",
+									"value": "Це пост користувача 1 під номером 3!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/posts",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "retrieve",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts/3",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "text",
+									"value": "Привіт! Я новий текст!",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}/posts/2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "destroy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{host}}/posts/2",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"posts",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
